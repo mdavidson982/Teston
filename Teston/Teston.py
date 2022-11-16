@@ -1,17 +1,17 @@
-import discord, json
+import discord, json, requests
 from discord.ext import commands
-
 
 
 intents = discord.Intents.default()
 intents.message_content = True
+
+api_key = "2025f97dbddcd68e4dfee40ca51b25dc"
 
 bot = commands.Bot(intents=intents, command_prefix="-")
 
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
-
 
 
 @bot.event
@@ -47,5 +47,17 @@ async def button(ctx):
     print("Running")
     await ctx.reply("This message has buttons!",view=TestButtons())
 
+@bot.command()
+async def testembed(ctx, input):
+
+    if input.isdigit():
+        myEmbed = discord.Embed(title = "Just testing this shit out rq", color = 0xffffff)
+        myEmbed.add_field(name = "test for the folks", inline = False, value = "putin some shit here")
+        await ctx.send(embed=myEmbed)
+    else:
+        await ctx.send(content = "Uhh, try again chief")
+
+#@bot.command()
+#async def weather(ctx, *args):
 
 bot.run('MTA0MTQ0MjcwMTI3NjYxODg5Mg.G3JFaT.7IM--DgpPl3pj7wJRtdfCd7zEJtK-ATjPBvpSY')
