@@ -71,29 +71,62 @@ async def testembed(ctx, input):
     else:
         await ctx.send(content = "Uhh, try again chief")
 
+
+
+
+
+#Gets the weather based off a users input
+#Input format: -weather City name, State code (if in US), Country code
+#Country code refers to the ISO 1833 country code list.
 @bot.command()
 async def weather(ctx, *args):
-    baseURL = "http://api.openweathermap.org/geo/1.0/direct?q="
+    #The first steps of this command take the user input and converts the given city to it's coresponding Lattitude and Logittude based using the OpenWeather API
+    
+    #BaseURL for getting Lat and Lon
+    baseURL = "http://api.openweathermap.org/geo/1.0/direct?q=" 
+
+    #technically the command can take an infinite number of arguments, this is because some cities can be made up of more then one name
+    #Ex: West Warwick
+    #If this we didn't do it this way, citynames containing more then one word would have to be contained using " "
+    #Which isn't user friendly
+
+
+    #Using the arguments, we reduce any extra spaces by combining each argument with a single space
+    #Ex: West                     Warwick,              RI, US
+    #Becomes: West Warwick, RI, US
     inputArgsReader = ' '.join(args)
+
+    #Next, we create an array by splitting each input by using ,
     positionArray = inputArgsReader.split(",")
     
+
+    #If the positionArray is = 3, then it is in the US (since only US locations use the state codes)
     if(len(positionArray) == 3):
         url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=1&appid=" + api_key
         response = requests.get(url)
+
+    #If the positionArray is = 2, it could be anywhere, The second input could be a state or a country code.
     elif(len(positionArray) == 2):
         url = baseURL + positionArray[0] + "," + positionArray[1] + "&limit=1&appid=" + api_key
         response = requests.get(url)
+
+    #If the positionArray is 1, then the user just entered a City name. This could be dangerous? The output might not be the city they were looking for
     elif(len(positionArray) == 1):
         url = baseURL + positionArray[0] + "&limit=1&appid=" + api_key 
         response = requests.get(url)
-    else:
-        await ctx.send(content = "Too many inputs")
-
-    file = response.json()
-    if (len(file) == 0):
-        await ctx.send("Nothing found, please try to be more specific")
-    else:
-        place=file[0]
-        await ctx.send(embed = getWeather(place["lat"],place["lon"],positionArray[0]))
+        
+    
+      #If something goes wrong here, The user input was incorrect. Throw an Excetion
+    try:
+        file = response.json()
+    
+        if (len(file) == 0):
+            await ctx.send("Nothing found, please try to be more specific")
+        else:
+            print((len(file)))
+            place=file[0]
+            await ctx.send(embed = getWeather(place["lat"],place["lon"],positionArray[0]))
+    except:
+        await ctx.send("Something went wrong. Did you put the command in correctly?") 
 
 bot.run('MTA0MTQ0MjcwMTI3NjYxODg5Mg.G3JFaT.7IM--DgpPl3pj7wJRtdfCd7zEJtK-ATjPBvpSY')
