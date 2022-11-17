@@ -11,22 +11,27 @@ bot = commands.Bot(intents=intents, command_prefix="-")
 
 def getWeather(lat,lon,cityName):
         url = "https://api.openweathermap.org/data/2.5/weather?" + "appid=" + api_key + "&lat=" + str(lat) + "&lon=" + str(lon) + "&units=imperial"
+        print(url)
         response = requests.get(url)
         file = response.json()
         data = file["main"]
         description = file["weather"]
         country = file["sys"]
+        wind = file["wind"]
         temp = data["temp"]
+        tempmin = data["temp_min"]
+        tempmax = data["temp_max"]
+        humidity = data["humidity"]
         
 
         embed=discord.Embed(title=str(round(temp,2)) + "°F" , description = str(round(((temp-32) * 0.56),2)) + "°C", color=0xfbff00)
         embed.set_author(name=cityName + ", " + str(country["country"]))
         embed.set_thumbnail(url="https://images.emojiterra.com/twitter/v13.1/512px/1f327.png")
         embed.add_field(name="Condition: ", value=str(description[0]["description"]), inline=False)
-        embed.add_field(name="Min", value="F (c)", inline=True)
-        embed.add_field(name="Max", value="F(c)", inline=True)
-        embed.add_field(name="Humidity", value="n%", inline=True)
-        embed.add_field(name="Wind", value="Speed n", inline=False)
+        embed.add_field(name="Min " + str(tempmin) + "°F", value = "(" + str(round(((tempmin - 32) * .56),2)) + "°C)", inline=True)
+        embed.add_field(name="Max " + str(tempmax) + "°F", value = "(" + str(round(((tempmax - 32) * .56),2)) + "°C)", inline=True)
+        embed.add_field(name="Humidity", value= str(humidity)+"%", inline=False)
+        embed.add_field(name="Wind", value=str(wind["speed"]) + " MPH" , inline=True)
         embed.set_footer(text="Lat: " + str(lat) + " " + "Lon: " + str(lon))
         return embed
 
@@ -121,10 +126,11 @@ async def weather(ctx, *args):
         file = response.json()
     
         if (len(file) == 0):
-            await ctx.send("Nothing found, please try to be more specific")
+            await ctx.send("Nothing found, please try to be more specific and check your spelling")
         else:
-            print((len(file)))
             place=file[0]
+
+            #sends info to the getWeather function above
             await ctx.send(embed = getWeather(place["lat"],place["lon"],positionArray[0]))
     except:
         await ctx.send("Something went wrong. Did you put the command in correctly?") 
