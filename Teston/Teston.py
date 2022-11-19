@@ -9,7 +9,8 @@ from discord.ui import Select, View
 
 
 def embedMaker():
-
+    embed = discord.Embed(title = "Test")
+    return embed
 class Dropdown(discord.ui.Select):
     def __init__(self):
 
@@ -34,7 +35,7 @@ class Dropdown(discord.ui.Select):
         self.disabled = True
         await interaction.response.edit_message(view = self.view)
         embed = embedMaker()
-        await interaction.followup.send(f'Your favourite colour is {self.values[0]}')
+        await interaction.followup.send(embed=embed)
         
 
 
