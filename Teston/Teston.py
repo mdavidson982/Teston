@@ -10,6 +10,7 @@ bot = commands.Bot(intents=intents, command_prefix="-")
 
 
 def getWeather(lat,lon,cityName):
+      
         url = "https://api.openweathermap.org/data/2.5/weather?" + "appid=" + api_key + "&lat=" + str(lat) + "&lon=" + str(lon) + "&units=imperial"
         print(url)
         response = requests.get(url)
@@ -96,6 +97,8 @@ async def on_message(message):
 class Buttons(discord.ui.View):
     def __init__(self, *, timeout = 180):
         super().__init__(timeout=timeout)
+
+    
     @discord.ui.button(label="Button", style=discord.ButtonStyle.gray)
     async def gray_button(self,interaction:discord.Interaction,button:discord.ui.Button):
         await interaction.response.edit_message(content=f"This is a new message")
@@ -103,20 +106,7 @@ class Buttons(discord.ui.View):
 @bot.command()
 async def button(ctx):
     print("Running")
-    await ctx.reply("This message has buttons!",view=Buttons())
-
-
-@bot.command()
-async def testembed(ctx, input):
-
-    if input.isdigit():
-        myEmbed = discord.Embed(title = "Just testing this shit out rq", color = 0xffffff)
-        myEmbed.add_field(name = "test for the folks", inline = False, value = "putin some shit here")
-        await ctx.send(embed=myEmbed)
-    else:
-        await ctx.send(content = "Uhh, try again chief")
-
-
+    await ctx.reply("This message has buttons!",view=Buttons(numButton))
 
 
 
@@ -147,31 +137,38 @@ async def weather(ctx, *args):
 
     #If the positionArray is = 3, then it is in the US (since only US locations use the state codes)
     if(len(positionArray) == 3):
-        url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&appid=" + api_key
+        url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=5&appid=" + api_key
         response = requests.get(url)
+        print(url)
 
     #If the positionArray is = 2, it could be anywhere, The second input could be a state or a country code.
     elif(len(positionArray) == 2):
-        url = baseURL + positionArray[0] + "," + positionArray[1] + "&limit=1&appid=" + api_key
+        url = baseURL + positionArray[0] + "," + positionArray[1] + "&limit=5&appid=" + api_key
         response = requests.get(url)
 
     #If the positionArray is 1, then the user just entered a City name. This could be dangerous? The output might not be the city they were looking for
     elif(len(positionArray) == 1):
-        url = baseURL + positionArray[0] + "&limit=1&appid=" + api_key 
+
+        url = baseURL + positionArray[0] + "&limit=5&appid=" + api_key
         response = requests.get(url)
+        print(url)
         
     
     #If something goes wrong here, The user input was incorrect. Throw an Excetion
-    file = response.json()
     
+    file = response.json()
+    print(len(file))
     if (len(file) == 0):
         await ctx.send("Nothing found, please try to be more specific and check your spelling")
-    else:
-        place=file[1]
-            
+    elif len(file) == 1:
+            place = file[0]
+            cityNames = [place["name"]]
+
 
         #sends info to the getWeather function above
-        await ctx.send(embed = getWeather(place["lat"],place["lon"],positionArray[0]))
+    
+    await ctx.send(embed = getWeather(place["lat"],place["lon"],cityNames[0]))
+        #except:
     await ctx.send("Something went wrong. Did you put the command in correctly?") 
 
 bot.run('MTA0MTQ0MjcwMTI3NjYxODg5Mg.G3JFaT.7IM--DgpPl3pj7wJRtdfCd7zEJtK-ATjPBvpSY')
