@@ -147,7 +147,7 @@ async def weather(ctx, *args):
 
     #If the positionArray is = 3, then it is in the US (since only US locations use the state codes)
     if(len(positionArray) == 3):
-        url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=1&appid=" + api_key
+        url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&appid=" + api_key
         response = requests.get(url)
 
     #If the positionArray is = 2, it could be anywhere, The second input could be a state or a country code.
@@ -161,18 +161,17 @@ async def weather(ctx, *args):
         response = requests.get(url)
         
     
-      #If something goes wrong here, The user input was incorrect. Throw an Excetion
-    try:
-        file = response.json()
+    #If something goes wrong here, The user input was incorrect. Throw an Excetion
+    file = response.json()
     
-        if (len(file) == 0):
-            await ctx.send("Nothing found, please try to be more specific and check your spelling")
-        else:
-            place=file[0]
+    if (len(file) == 0):
+        await ctx.send("Nothing found, please try to be more specific and check your spelling")
+    else:
+        place=file[1]
+            
 
-            #sends info to the getWeather function above
-            await ctx.send(embed = getWeather(place["lat"],place["lon"],positionArray[0]))
-    except:
-        await ctx.send("Something went wrong. Did you put the command in correctly?") 
+        #sends info to the getWeather function above
+        await ctx.send(embed = getWeather(place["lat"],place["lon"],positionArray[0]))
+    await ctx.send("Something went wrong. Did you put the command in correctly?") 
 
 bot.run('MTA0MTQ0MjcwMTI3NjYxODg5Mg.G3JFaT.7IM--DgpPl3pj7wJRtdfCd7zEJtK-ATjPBvpSY')
