@@ -17,21 +17,61 @@ def getWeather(lat,lon,cityName):
         data = file["main"]
         description = file["weather"]
         country = file["sys"]
-        wind = file["wind"]
+        weather = file["wind"]
         temp = data["temp"]
         tempmin = data["temp_min"]
         tempmax = data["temp_max"]
         humidity = data["humidity"]
-        
+        symbolCode = description[0]["id"]
 
+        if symbolCode in range(200, 805, 1):
+            if symbolCode in range(200,233,1):
+                #lightning
+                Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823546117824523/cloud-with-lightning.png"
+            if symbolCode in range(300,322,1):
+                #rain cloud, drizzling
+                Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823545169911940/cloud-with-rain.png"
+            if symbolCode in range(500,532,1):
+
+                if(symbolCode == 511):
+                    #snowflake, freezing rain
+                    Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823546432393297/snowflake.png"
+                else:
+                    #rain cloud
+                    Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823545169911940/cloud-with-rain.png"
+            if symbolCode in range(600,623,1):
+                #snowflake
+                Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823546432393297/snowflake.png"
+
+            if symbolCode in range(701,782,1):
+                #fog
+                Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823544813404160/fog.png"
+            if symbolCode == 800:
+                #sunny
+                Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823545778094111/sun.png"
+            if symbolCode in range(801,805,1):
+                if symbolCode == 801:
+                    #partly cloudy, more sun
+                    Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823545480286218/sun-behind-cloud.png"
+                if symbolCode == 802:
+                    #partly cloudy, less sun
+                    Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1043291154214559764/partly-cloudy.png"
+                if symbolCode == 803 or symbolCode == 804:
+                    #clouds
+                    Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823546763755651/cloudy.png"
+        else: 
+            #if Code is not in range, set the URL to sunny
+            Wurl = "https://cdn.discordapp.com/attachments/785260019209863223/1042823545778094111/sun.png"
+
+        
         embed=discord.Embed(title=str(round(temp,2)) + "°F" , description = str(round(((temp-32) * 0.56),2)) + "°C", color=0xfbff00)
         embed.set_author(name=cityName + ", " + str(country["country"]))
-        embed.set_thumbnail(url="https://images.emojiterra.com/twitter/v13.1/512px/1f327.png")
+        embed.set_thumbnail(url=Wurl)
         embed.add_field(name="Condition: ", value=str(description[0]["description"]), inline=False)
         embed.add_field(name="Min " + str(tempmin) + "°F", value = "(" + str(round(((tempmin - 32) * .56),2)) + "°C)", inline=True)
         embed.add_field(name="Max " + str(tempmax) + "°F", value = "(" + str(round(((tempmax - 32) * .56),2)) + "°C)", inline=True)
         embed.add_field(name="Humidity", value= str(humidity)+"%", inline=False)
-        embed.add_field(name="Wind", value=str(wind["speed"]) + " MPH" , inline=True)
+        embed.add_field(name="Wind", value=str(weather["speed"]) + " MPH" , inline=True)
         embed.set_footer(text="Lat: " + str(lat) + " " + "Lon: " + str(lon))
         return embed
 
