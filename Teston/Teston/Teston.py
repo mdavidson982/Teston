@@ -226,55 +226,51 @@ async def weather(ctx, *args):
 
     #if no results, say that nothing was found
     print("Response Length: "+ str(len(file)))
-    if (len(file) == 0):
-        await ctx.send("Dumbass")
-    #If one result, send the information to the getWeather function
-    elif len(file) == 1:
-            place = file[0]
+    try:
+        if (len(file) == 0):
+            await ctx.send("Dumbass")
+        #If one result, send the information to the getWeather function
+        elif len(file) == 1:
+                place = file[0]
             
-            await ctx.send(embed = getWeather(place["lat"],place["lon"],place["name"]))
-    #if more then one result, create a selection view where the user will be asked
-    #to select on of the results. After an option is selected, display the weather for that city.
-    else:
-        view = DropdownView()
-        newState = []
-        newCountry = []
-        dupState = []
-        dupCountry = []
-        for i in range(len(file)):
-            place = file[i]
-            if "state" in place:
-                if place["state"] not in newState:
-                    newState.append(place["state"])
+                await ctx.send(embed = getWeather(place["lat"],place["lon"],place["name"]))
+        #if more then one result, create a selection view where the user will be asked
+        #to select on of the results. After an option is selected, display the weather for that city.
+        else:
+            view = DropdownView()
+            newState = []
+            newCountry = []
+            dupState = []
+            dupCountry = []
+            for i in range(len(file)):
+                place = file[i]
+                if "state" in place:
+                    if place["state"] not in newState:
+                        newState.append(place["state"])
 
 
-                    if(emoji.is_emoji(flag_for(place["country"]))):
-                        view.dropdown.add_option(label = place["name"] + ", " + place["state"] + ", " + place["country"], emoji = flag_for(place["country"]))
+                        if(emoji.is_emoji(flag_for(place["country"]))):
+                            view.dropdown.add_option(label = place["name"] + ", " + place["state"] + ", " + place["country"], emoji = flag_for(place["country"]))
+                        else:
+                            view.dropdown.add_option(label = place["name"] + ", " + place["state"] + ", " + place["country"])
                     else:
-                        view.dropdown.add_option(label = place["name"] + ", " + place["state"] + ", " + place["country"])
-                else:
-                    dupState.append(i)
+                        dupState.append(i)
                 
-            else:
-                if i not in newCountry:
-                    newCountry.append(i)
-                    #print(str(i) + ", ")
-                    #print(place["name"] + ", " + place["country"])
-                    if(emoji.is_emoji(flag_for(place["country"]))):
-                        view.dropdown.add_option(label = place["name"] + ", " + place["country"], emoji = flag_for(place["country"]))
-                    else:
-                        view.dropdown.add_option(label = place["name"] + ", " + place["country"])
                 else:
-                    dupCountry.append(i)
+                    if i not in newCountry:
+                        newCountry.append(i)
+                        #print(str(i) + ", ")
+                        #print(place["name"] + ", " + place["country"])
+                        if(emoji.is_emoji(flag_for(place["country"]))):
+                            view.dropdown.add_option(label = place["name"] + ", " + place["country"], emoji = flag_for(place["country"]))
+                        else:
+                            view.dropdown.add_option(label = place["name"] + ", " + place["country"])
+                    else:
+                        dupCountry.append(i)
 
-        await ctx.send("**multiple results found:**", view = view)
-        
-        
-            
+            await ctx.send("**multiple results found:**", view = view)
 
-        
-    
-        #except:
-    #await ctx.send("Something went wrong. Did you put the command in correctly?") 
+    except:
+         await ctx.send("Something went wrong. Did you put the command in correctly?") 
 
 bot.run('MTA0MTQ0MjcwMTI3NjYxODg5Mg.G3JFaT.7IM--DgpPl3pj7wJRtdfCd7zEJtK-ATjPBvpSY')
