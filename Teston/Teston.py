@@ -1,4 +1,4 @@
-import discord, json, requests
+import discord, json, requests, emoji, unicodedata
 from discord.ext import commands
 from discord.ui import Select, View
 
@@ -18,6 +18,13 @@ class Bot(commands.Bot):
 
 bot = Bot()
 
+
+def flag_for(code):
+    """Return unicode flag emoji given a 2-digit country code."""
+    return "".join(
+        unicodedata.lookup(f"REGIONAL INDICATOR SYMBOL LETTER {char}")
+        for char in code
+    )
 
 def embedMaker():
     embed = discord.Embed(title = "Test")
@@ -42,35 +49,26 @@ class Dropdown(discord.ui.Select):
         if(len(positionArray) == 3):
             url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=10&appid=" + api_key
             response = requests.get(url)
-            print(url)
+            print("Geo URL: "+ url)
 
         #If the positionArray is = 2, it could be anywhere, The second input could be a state or a country code.
         elif(len(positionArray) == 2):
             url = baseURL + positionArray[0] + "," + positionArray[1] + "&limit=10&appid=" + api_key
             response = requests.get(url)
+            print("Geo URL: "+ url)
 
         #If the positionArray is 1, then the user just entered a City name. This could be dangerous? The output might not be the city they were looking for
         elif(len(positionArray) == 1):
 
             url = baseURL + positionArray[0] + "&limit=10&appid=" + api_key
             response = requests.get(url)
-            print(url)
+            print("Geo URL: "+ url)
             
         file = response.json()
         place = file[0]
         await interaction.response.send_message(embed = getWeather(place["lat"],place["lon"],place["name"]))
 
 
-    #async def callback(self, interaction: discord.Interaction):
-        # Use the interaction object to send a response message containing
-        # the user's favourite colour or choice. The self object refers to the
-        # Select object, and the values attribute gets a list of the user's
-        # selected options. We only want the first one.
-        
-        #self.disabled = True
-        #await interaction.response.edit_message(view = self.view)
-        
-        #await interaction.followup.send(f"{self.values[0]}")
         
 
 class DropdownView(discord.ui.View):
@@ -84,9 +82,9 @@ class DropdownView(discord.ui.View):
 
 
 def getWeather(lat,lon,cityName):
-        print("runnin")
+        
         url = "https://api.openweathermap.org/data/2.5/weather?" + "appid=" + api_key + "&lat=" + str(lat) + "&lon=" + str(lon) + "&units=imperial"
-        print(url)
+        print("Weather URL: "+url)
         response = requests.get(url)
         file = response.json()
         data = file["main"]
@@ -205,7 +203,7 @@ async def weather(ctx, *args):
 
     #If the positionArray is = 3, then it is in the US (since only US locations use the state codes)
     if(len(positionArray) == 3):
-        url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=10on&appid=" + api_key
+        url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=10&appid=" + api_key
         response = requests.get(url)
         print(url)
 
@@ -219,17 +217,17 @@ async def weather(ctx, *args):
 
         url = baseURL + positionArray[0] + "&limit=10&appid=" + api_key
         response = requests.get(url)
-        print(url)
+        print("Geo URL: "+url)
         
     
     #If something goes wrong here, The user input was incorrect. Throw an Excetion
     
     file = response.json()
-    print(len(file))
 
     #if no results, say that nothing was found
+    print("Response Length: "+ str(len(file)))
     if (len(file) == 0):
-        await ctx.send("Nothing found, please try to be more specific and check your spelling")
+        await ctx.send("Dumbass")
     #If one result, send the information to the getWeather function
     elif len(file) == 1:
             place = file[0]
@@ -248,23 +246,30 @@ async def weather(ctx, *args):
             if "state" in place:
                 if place["state"] not in newState:
                     newState.append(place["state"])
-                    print(place["country"] + ", ")
-                    print(place["name"] + ", " + place["state"] + ", " + place["country"])
-                    view.dropdown.add_option(label = place["name"] + ", " + place["state"] + ", " + place["country"])
+
+
+                    if(emoji.is_emoji(flag_for(place["country"]))):
+                        view.dropdown.add_option(label = place["name"] + ", " + place["state"] + ", " + place["country"], emoji = flag_for(place["country"]))
+                    else:
+                        view.dropdown.add_option(label = place["name"] + ", " + place["state"] + ", " + place["country"])
                 else:
                     dupState.append(i)
                 
             else:
                 if i not in newCountry:
                     newCountry.append(i)
-                    print(str(i) + ", ")
-                    print(place["name"] + ", " + place["country"])
-                    view.dropdown.add_option(label = place["name"] + ", " + place["country"])
+                    #print(str(i) + ", ")
+                    #print(place["name"] + ", " + place["country"])
+                    if(emoji.is_emoji(flag_for(place["country"]))):
+                        view.dropdown.add_option(label = place["name"] + ", " + place["country"], emoji = flag_for(place["country"]))
+                    else:
+                        view.dropdown.add_option(label = place["name"] + ", " + place["country"])
                 else:
                     dupCountry.append(i)
 
         await ctx.send("**multiple results found:**", view = view)
-
+        
+        
             
 
         
