@@ -66,8 +66,10 @@ class Dropdown(discord.ui.Select):
             
         file = response.json()
         place = file[0]
-        await interaction.response.send_message(embed = getWeather(place["lat"],place["lon"],place["name"]))
-
+        if "state" in place:
+            await interaction.response.send_message(embed = getWeather(place["lat"],place["lon"],place["name"], place["state"]))
+        else: 
+            await interaction.response.send_message(embed = getWeather(place["lat"],place["lon"],place["name"]))
 
         
 
@@ -76,13 +78,15 @@ class DropdownView(discord.ui.View):
         super().__init__()
 
         # Adds the dropdown to our view object.
+        #also allows us to add more views to the dropdown object class
         self.dropdown = Dropdown()
         self.add_item(self.dropdown)
 
 
 
-def getWeather(lat,lon,cityName):
+def getWeather(lat,lon,cityName,stateName = ""):
         
+        #Weather request URL  
         url = "https://api.openweathermap.org/data/2.5/weather?" + "appid=" + api_key + "&lat=" + str(lat) + "&lon=" + str(lon) + "&units=imperial"
         print("Weather URL: "+url)
         response = requests.get(url)
@@ -138,7 +142,13 @@ def getWeather(lat,lon,cityName):
 
         
         embed=discord.Embed(title=str(round(temp,2)) + "°F" , description = str(round(((temp-32) * 0.56),2)) + "°C", color=0xfbff00)
-        embed.set_author(name=str(cityName) + ", " + str(country["country"]))
+
+        #if stateName is not "" mention it in the author list of the embed
+        #if "" the place does not have a state, use the other author listing
+        if (str(stateName) != ""):
+            embed.set_author(name=str(cityName) + ", " + str(stateName) + ", " + str(country["country"]))
+        else:
+            embed.set_author(name=str(cityName) + ", " + str(country["country"]))
         embed.set_thumbnail(url=Wurl)
         embed.add_field(name="Condition: ", value=str(description[0]["description"]), inline=False)
         embed.add_field(name="Min " + str(tempmin) + "°F", value = "(" + str(round(((tempmin - 32) * .56),2)) + "°C)", inline=True)
@@ -147,18 +157,6 @@ def getWeather(lat,lon,cityName):
         embed.add_field(name="Wind", value=str(weather["speed"]) + " MPH" , inline=True)
         embed.set_footer(text="Lat: " + str(lat) + " " + "Lon: " + str(lon))
         return embed
-
-
-
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return
-
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
-
-    await bot.process_commands(message)
 
 class Buttons(discord.ui.View):
     def __init__(self, *, timeout = 180):
@@ -224,43 +222,62 @@ async def weather(ctx, *args):
     
     file = response.json()
 
-    #if no results, say that nothing was found
+   
     print("Response Length: "+ str(len(file)))
+
     try:
+         #if no results, say that nothing was found
         if (len(file) == 0):
             await ctx.send("Dumbass")
-        #If one result, send the information to the getWeather function
+
+
+        #If one result, send the information directly to the getWeather function, no selection needed
         elif len(file) == 1:
                 place = file[0]
-            
-                await ctx.send(embed = getWeather(place["lat"],place["lon"],place["name"]))
+
+                #if there is a state in the location, send it to getWeather, if there is no state the stateName variable in the function defaults to ""
+                if "state" in place:
+                    await ctx.send(embed = getWeather(place["lat"],place["lon"],place["name"],place["state"]))
+                else:
+                    await ctx.send(embed = getWeather(place["lat"],place["lon"],place["name"]))
+
+
         #if more then one result, create a selection view where the user will be asked
         #to select on of the results. After an option is selected, display the weather for that city.
         else:
+            #Creates a DropDownView object
             view = DropdownView()
+
+            #list of new and duplicate country and states.
+            #This is used to make sure duplicates aren't put into the selection list
             newState = []
             newCountry = []
             dupState = []
             dupCountry = []
             for i in range(len(file)):
                 place = file[i]
+
+                #if this instance of file mentions a state
                 if "state" in place:
+
+                    #if the state has already been added to the newState list, do not create a new dropdown
                     if place["state"] not in newState:
                         newState.append(place["state"])
 
 
                         if(emoji.is_emoji(flag_for(place["country"]))):
+                            #dropdown creation
                             view.dropdown.add_option(label = place["name"] + ", " + place["state"] + ", " + place["country"], emoji = flag_for(place["country"]))
                         else:
+                            #dropdown creation for places without flag emoji
                             view.dropdown.add_option(label = place["name"] + ", " + place["state"] + ", " + place["country"])
                     else:
                         dupState.append(i)
                 
+                #if a state is not mentioned, try to find duplicate countries
                 else:
-                    if i not in newCountry:
+                    if place["country"] not in newCountry:
                         newCountry.append(i)
-                        #print(str(i) + ", ")
-                        #print(place["name"] + ", " + place["country"])
                         if(emoji.is_emoji(flag_for(place["country"]))):
                             view.dropdown.add_option(label = place["name"] + ", " + place["country"], emoji = flag_for(place["country"]))
                         else:
