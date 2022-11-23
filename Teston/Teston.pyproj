@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6496c654-a01e-4165-a35a-f7b8a0fe884d</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Teston\Teston.py</StartupFile>
+    <StartupFile>Teston\weather.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,10 +22,17 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Teston\modules\test\cog.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Teston\modules\weather\cog.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Teston\Teston.py" />
+    <Compile Include="Teston\Mini Weston V3.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Teston\weather - Copy.py" />
+    <Compile Include="Teston\weather.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.9" />
@@ -33,6 +40,7 @@
   <ItemGroup>
     <Folder Include="Teston\" />
     <Folder Include="Teston\modules\" />
+    <Folder Include="Teston\modules\test\" />
     <Folder Include="Teston\modules\weather\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

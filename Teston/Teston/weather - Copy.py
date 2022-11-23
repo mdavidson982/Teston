@@ -100,7 +100,7 @@ def getWeather(lat,lon,cityName,stateName = ""):
         tempmax = data["temp_max"]
         humidity = data["humidity"]
         symbolCode = description[0]["id"]
-
+        
         if symbolCode in range(200, 805, 1):
             if symbolCode in range(200,233,1):
                 #lightning
