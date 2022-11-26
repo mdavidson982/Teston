@@ -4,20 +4,18 @@ from discord.ui import Select, View
 
 
 api_key = "2025f97dbddcd68e4dfee40ca51b25dc"
-class Bot(commands.Bot):
-    def __init__(self):
-        intents = discord.Intents.default()
-        intents.message_content = True
 
-        super().__init__(command_prefix=commands.when_mentioned_or('-'), intents=intents)
+class WeatherClass(commands.Cog):
+    def __inti__(self, bot):
+        self.bot = bot
 
-    async def on_ready(self):
-        print(f'Logged in as {self.user} (ID: {self.user.id})')
-        print('------')
+    @commands.command(name = "weather")
+    async def weatherCommand(self, ctx, *args):
+        await weather(ctx, *args)
 
 
-bot = Bot()
-
+async def setup(bot):
+    await bot.add_cog(WeatherClass(bot))
 
 def flag_for(code):
     """Return unicode flag emoji given a 2-digit country code."""
@@ -26,9 +24,6 @@ def flag_for(code):
         for char in code
     )
 
-def embedMaker():
-    embed = discord.Embed(title = "Test")
-    return embed
 class Dropdown(discord.ui.Select):
     def __init__(self):
 
@@ -158,26 +153,10 @@ def getWeather(lat,lon,cityName,stateName = ""):
         embed.set_footer(text="Lat: " + str(lat) + " " + "Lon: " + str(lon))
         return embed
 
-class Buttons(discord.ui.View):
-    def __init__(self, *, timeout = 180):
-        super().__init__(timeout=timeout)
-
-    
-    @discord.ui.button(label="Button", style=discord.ButtonStyle.gray)
-    async def gray_button(self,interaction:discord.Interaction,button:discord.ui.Button):
-        await interaction.response.edit_message(content=f"This is a new message")
-
-@bot.command()
-async def button(ctx):
-    print("Running")
-    await ctx.reply("This message has buttons!",view=Buttons())
-
-
 
 #Gets the weather based off a users input
 #Input format: -weather City name, State code (if in US), Country code
 #Country code refers to the ISO 1833 country code list.
-@bot.command()
 async def weather(ctx, *args):
     #The first steps of this command take the user input and converts the given city to it's coresponding Lattitude and Logittude based using the OpenWeather API
     
@@ -288,6 +267,4 @@ async def weather(ctx, *args):
             await ctx.send("**multiple results found:**", view = view)
 
     except:
-         await ctx.send("Something went wrong. Did you put the command in correctly?") 
-
-bot.run('MTA0MTQ0MjcwMTI3NjYxODg5Mg.G3JFaT.7IM--DgpPl3pj7wJRtdfCd7zEJtK-ATjPBvpSY')
+         await ctx.send("Something went wrong. Did you put the command in correctly?")

@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import sys, traceback, os
 
-api_key = "2025f97dbddcd68e4dfee40ca51b25dc"
 class MiniWeston(commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()
