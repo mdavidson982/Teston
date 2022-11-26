@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6496c654-a01e-4165-a35a-f7b8a0fe884d</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Teston\weather.py</StartupFile>
+    <StartupFile>Teston\Mini Weston V3.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,7 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Teston\modules\test\cog.py">
+    <Compile Include="Teston\test.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Teston\modules\weather\cog.py">
