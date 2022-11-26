@@ -12,7 +12,7 @@ class WeatherClass(commands.Cog):
     #Gets the weather based off a users input
     #Input format: -weather City name, State code (if in US), Country code
     #Country code refers to the ISO 1833 country code list
-    @commands.command(name = "weather")
+    @commands.command()
     async def weather(self, ctx, *args):
         #The first steps of this command take the user input and converts the given city to it's coresponding Lattitude and Logittude based using the OpenWeather API
     
