@@ -6,8 +6,10 @@ class test(commands.Cog):
         self.bot=bot
 
     @commands.command()
-    async def test(self, ctx):
-        await ctx.send("Yep, this test worked.")
+    async def test(self, ctx, value:int):
+        await ctx.send(mathStuff(value))
 
+def mathStuff(value):
+    return value**2
 async def setup(bot):
     await bot.add_cog(test(bot))
