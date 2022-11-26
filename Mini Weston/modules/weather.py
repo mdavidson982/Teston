@@ -56,7 +56,6 @@ class WeatherClass(commands.Cog):
         #If something goes wrong here, The user input was incorrect. Throw an Excetion
     
         file = response.json()
-
    
         print("Response Length: "+ str(len(file)))
 
@@ -125,10 +124,9 @@ class WeatherClass(commands.Cog):
         except:
              await ctx.send("Something went wrong. Did you put the command in correctly?")
 
-
+#Required for cog set up. Adds the cog to the bot class in the Mini Weston V3 file.
 async def setup(bot):
     await bot.add_cog(WeatherClass(bot))
-
 
 def flag_for(code):
     """Return unicode flag emoji given a 2-digit country code."""
@@ -180,7 +178,6 @@ class Dropdown(discord.ui.Select):
             await interaction.response.send_message(embed = getWeather(place["lat"],place["lon"],place["name"]))
 
         
-
 class DropdownView(discord.ui.View):
     def __init__(self):
         super().__init__()
@@ -189,7 +186,6 @@ class DropdownView(discord.ui.View):
         #also allows us to add more views to the dropdown object class
         self.dropdown = Dropdown()
         self.add_item(self.dropdown)
-
 
 
 def getWeather(lat,lon,cityName,stateName = ""):
