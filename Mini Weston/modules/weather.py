@@ -50,7 +50,7 @@ class WeatherClass(commands.Cog):
 
             url = baseURL + positionArray[0] + "&limit=10&appid=" + api_key
             response = requests.get(url)
-            print("Geo URL: "+url)
+            
         
     
         #If something goes wrong here, The user input was incorrect. Throw an Excetion
