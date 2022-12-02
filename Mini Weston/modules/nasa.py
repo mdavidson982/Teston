@@ -13,7 +13,10 @@ class nasa(commands.Cog):
         response = requests.get(base_url + api_key)
         
         file = response.json()
-        await ctx.send(file)
+        embed=discord.Embed(title="TEST")
+        embed.set_image(url= "https://apod.nasa.gov/apod/image/2201/RhoOphAntares_Cogo_1024.jpg")
+        #embed.set_footer(text= "url: https://www.youtube.com/embed/s6IpsM_HNcU?rel=0")
+        await ctx.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(nasa(bot))
