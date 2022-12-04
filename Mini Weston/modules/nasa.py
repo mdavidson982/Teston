@@ -1,22 +1,37 @@
-import discord, requests, json
+import discord, requests, json, aiohttp
 from discord.ext import commands
 
 
 class nasa(commands.Cog):
-    def __inti__(self,bot):
+    def __init__(self,bot):
         self.bot=bot
+        self.api_key = "0XlU1S3AcEWP6Is3X30bqGgBT9Hx04UcYsW6k1N1"
+        #print("Yeah, nada loaded")
 
     @commands.command()
     async def apod(self,ctx):
-        api_key ="0XlU1S3AcEWP6Is3X30bqGgBT9Hx04UcYsW6k1N1"
         base_url = "https://api.nasa.gov/planetary/apod?api_key="
-        response = requests.get(base_url + api_key)
         
-        file = response.json()
-        embed=discord.Embed(title="TEST")
-        embed.set_image(url= "https://apod.nasa.gov/apod/image/2201/RhoOphAntares_Cogo_1024.jpg")
-        #embed.set_footer(text= "url: https://www.youtube.com/embed/s6IpsM_HNcU?rel=0")
-        await ctx.send(embed=embed)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(base_url + self.api_key) as r:
+                js = await r.json()
+                print(self.api_key)
+        await ctx.send(js)
 
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        for guild in self.bot.guilds:
+            selected_channel = guild.get_channel(785260436568276992)
+            print(selected_channel)
+            if(selected_channel != None):
+                await selected_channel.send("Worked?")
+            else:
+                print("ndom lmao")
+
+#async def sendMessage():
+    #guild = client.get_guild(785260019209863220)
+    #channel = guild.get_channel(785260019209863223)
+    #async guild.channel.send("sent on start")
 async def setup(bot):
     await bot.add_cog(nasa(bot))
