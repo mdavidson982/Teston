@@ -5,7 +5,7 @@ from discord.ext import commands
 class nasa(commands.Cog):
     def __init__(self,bot):
         self.bot=bot
-        self.api_key = "0XlU1S3AcEWP6Is3X30bqGgBT9Hx04UcYsW6k1N1"
+        self.API_KEY = "0XlU1S3AcEWP6Is3X30bqGgBT9Hx04UcYsW6k1N1"
         #print("Yeah, nada loaded")
 
     @commands.command()
@@ -13,9 +13,9 @@ class nasa(commands.Cog):
         base_url = "https://api.nasa.gov/planetary/apod?api_key="
         
         async with aiohttp.ClientSession() as session:
-            async with session.get(base_url + self.api_key) as r:
+            async with session.get(base_url + self.API_KEY) as r:
                 js = await r.json()
-                print(self.api_key)
+                print(self.API_KEY)
         await ctx.send(js)
 
 
