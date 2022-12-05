@@ -1,7 +1,7 @@
 import discord, requests, json, aiohttp
 from discord.ext import commands
 
-
+#Start of SQL testing
 class nasa(commands.Cog):
     def __init__(self,bot):
         self.bot=bot
