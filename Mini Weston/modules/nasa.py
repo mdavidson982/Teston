@@ -14,9 +14,23 @@ class nasa(commands.Cog):
         
         async with aiohttp.ClientSession() as session:
             async with session.get(base_url + self.API_KEY) as r:
-                js = await r.json()
-                print(self.API_KEY)
-        await ctx.send(js)
+                self.js = await r.json()
+        
+        if(self.js["media_type"] == "image"):
+            apodEmbed = discord.Embed(title = "**" + self.js["title"] + "**")
+            
+            #apodEmbed.set_author(self.js["date"])
+            if("hdurl" in self.js):
+                apodEmbed.set_image(url = self.js["hdurl"])
+                apodEmbed.set_footer(text="NASA Astronomy Picture of the Day", icon_url= "https://cdn.discordapp.com/attachments/849172801076199495/1049776014131200021/nasa-logo-web-rgb.png")
+            else:
+                apodEmbed.set_image(self.js["url"])
+                apodEmbed.set_footer("NASA Astronomy Picture of the Day", icon_url= "https://cdn.discordapp.com/attachments/849172801076199495/1049776014131200021/nasa-logo-web-rgb.png")
+        
+
+        await ctx.send(embed=apodEmbed)
+
+
 
 
     @commands.Cog.listener()
@@ -25,7 +39,7 @@ class nasa(commands.Cog):
             selected_channel = guild.get_channel(785260436568276992)
             print(selected_channel)
             if(selected_channel != None):
-                await selected_channel.send("Worked?")
+                print("test server")
             else:
                 print("ndom lmao")
 
