@@ -33,16 +33,6 @@ class nasa(commands.Cog):
 
 
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        for guild in self.bot.guilds:
-            selected_channel = guild.get_channel(785260436568276992)
-            print(selected_channel)
-            if(selected_channel != None):
-                print("test server")
-            else:
-                print("ndom lmao")
-
 #async def sendMessage():
     #guild = client.get_guild(785260019209863220)
     #channel = guild.get_channel(785260019209863223)
