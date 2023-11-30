@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import sys, traceback, os
+import Private as p
 
 class MiniWeston(commands.Bot):
     def __init__(self):
@@ -21,4 +22,4 @@ class MiniWeston(commands.Bot):
                 await self.load_extension(f'modules.{filename[:-3]}')
 
 bot = MiniWeston()
-bot.run('MTA0MTQ0MjcwMTI3NjYxODg5Mg.G3JFaT.7IM--DgpPl3pj7wJRtdfCd7zEJtK-ATjPBvpSY')
+bot.run(p.DISCORD_API_KEY)

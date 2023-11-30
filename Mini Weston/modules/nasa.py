@@ -1,5 +1,6 @@
 import discord, requests, json, aiohttp
 from discord.ext import commands
+import Private as p
 
 #NASA Buttons
 class ReadDescription(discord.ui.View):
@@ -25,14 +26,13 @@ class ReadDescription(discord.ui.View):
 class nasa(commands.Cog):
     def __init__(self,bot):
         self.bot=bot
-        self.API_KEY = "0XlU1S3AcEWP6Is3X30bqGgBT9Hx04UcYsW6k1N1"
 
     @commands.command()
     async def apod(self,ctx):
         base_url = "https://api.nasa.gov/planetary/apod?api_key="
         
         async with aiohttp.ClientSession() as session:
-            async with session.get(base_url + self.API_KEY) as r:
+            async with session.get(base_url + p.NASA_API_KEY) as r:
                 self.js = await r.json()
         
         if(self.js["media_type"] == "image"):

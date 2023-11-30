@@ -1,9 +1,10 @@
 import discord, json, requests, emoji, unicodedata
 from discord.ext import commands
 from discord.ui import Select, View
+import Private as p
 
 
-api_key = "2025f97dbddcd68e4dfee40ca51b25dc"
+
 
 class WeatherClass(commands.Cog):
     def __inti__(self, bot):
@@ -36,19 +37,19 @@ class WeatherClass(commands.Cog):
 
         #If the positionArray is = 3, then it is in the US (since only US locations use the state codes)
         if(len(positionArray) == 3):
-            url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=10&appid=" + api_key
+            url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=10&appid=" + p.OPEN_WEATHER_API_KEY
             response = requests.get(url)
             print(url)
 
         #If the positionArray is = 2, it could be anywhere, The second input could be a state or a country code.
         elif(len(positionArray) == 2):
-            url = baseURL + positionArray[0] + "," + positionArray[1] + "&limit=10&appid=" + api_key
+            url = baseURL + positionArray[0] + "," + positionArray[1] + "&limit=10&appid=" + p.OPEN_WEATHER_API_KEY
             response = requests.get(url)
 
         #If the positionArray is 1, then the user just entered a City name. This could be dangerous? The output might not be the city they were looking for
         elif(len(positionArray) == 1):
 
-            url = baseURL + positionArray[0] + "&limit=10&appid=" + api_key
+            url = baseURL + positionArray[0] + "&limit=10&appid=" + p.OPEN_WEATHER_API_KEY
             response = requests.get(url)
             
         
@@ -153,20 +154,20 @@ class Dropdown(discord.ui.Select):
         positionArray = self.values[0].split(",")
         #If the positionArray is = 3, then it is in the US (since only US locations use the state codes)
         if(len(positionArray) == 3):
-            url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=10&appid=" + api_key
+            url = baseURL + positionArray[0] + "," + positionArray[1] + "," + positionArray[2] + "&limit=10&appid=" + p.OPEN_WEATHER_API_KEY
             response = requests.get(url)
             print("Geo URL: "+ url)
 
         #If the positionArray is = 2, it could be anywhere, The second input could be a state or a country code.
         elif(len(positionArray) == 2):
-            url = baseURL + positionArray[0] + "," + positionArray[1] + "&limit=10&appid=" + api_key
+            url = baseURL + positionArray[0] + "," + positionArray[1] + "&limit=10&appid=" + p.OPEN_WEATHER_API_KEY
             response = requests.get(url)
             print("Geo URL: "+ url)
 
         #If the positionArray is 1, then the user just entered a City name. This could be dangerous? The output might not be the city they were looking for
         elif(len(positionArray) == 1):
 
-            url = baseURL + positionArray[0] + "&limit=10&appid=" + api_key
+            url = baseURL + positionArray[0] + "&limit=10&appid=" + p.OPEN_WEATHER_API_KEY
             response = requests.get(url)
             print("Geo URL: "+ url)
             
@@ -191,7 +192,7 @@ class DropdownView(discord.ui.View):
 def getWeather(lat,lon,cityName,stateName = ""):
         
         #Weather request URL  
-        url = "https://api.openweathermap.org/data/2.5/weather?" + "appid=" + api_key + "&lat=" + str(lat) + "&lon=" + str(lon) + "&units=imperial"
+        url = "https://api.openweathermap.org/data/2.5/weather?" + "appid=" + p.OPEN_WEATHER_API_KEY + "&lat=" + str(lat) + "&lon=" + str(lon) + "&units=imperial"
         print("Weather URL: "+url)
         response = requests.get(url)
         file = response.json()
