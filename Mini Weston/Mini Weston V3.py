@@ -17,7 +17,7 @@ class MiniWeston(commands.Bot):
 
 
     async def setup_hook(self):
-        for filename in os.listdir('./Mini Weston/modules'):
+        for filename in os.listdir('./modules'):
             if filename .endswith('.py'):
                 await self.load_extension(f'modules.{filename[:-3]}')
 
